@@ -34,7 +34,7 @@ def deserialize_map(serialized_map):
     serialized_map = serialized_map[1:]
     rows = serialized_map.split('[')
     column = rows[0].split('{')
-    deserialized_map = [[Tile() for x in range(40)] for y in range(40)]
+    deserialized_map = [[Tile() for x in range(20)] for y in range(20)]
     for i in range(len(rows) - 1):
         column = rows[i + 1].split('{')
 
@@ -71,6 +71,29 @@ def bot():
     serialized_map = map_json["CustomSerializedMap"]
     deserialized_map = deserialize_map(serialized_map)
 
+    n = 20 # horizontal size of the map
+    m = 20 # vertical size of the map
+
+    print 'Player:'
+    print player.Position
+    for x in range(n):
+        for y in range(m):
+            if deserialized_map[y][x].Content == 1:
+                print 'O', # wall
+            elif deserialized_map[y][x].Content == 0:
+                print '.', # empty
+            elif deserialized_map[y][x].Content == 2:
+                print 'H', # house
+            elif deserialized_map[y][x].Content == 3:
+                print '^', # lava
+            elif deserialized_map[y][x].Content == 4:
+                print '$', # resource
+            elif deserialized_map[y][x].Content == 5:
+                print 'S', # shop
+            elif deserialized_map[y][x].Content == 6:
+                print '*', # player
+        print '\n'
+
     otherPlayers = []
 
     for player_dict in map_json["OtherPlayers"]:
@@ -83,8 +106,21 @@ def bot():
 
             otherPlayers.append({player_name: player_info })
 
+    if player.Position.X < 28:
+        x = player.Position.X + 1
+        print 'X aug'
+        print x
+
+    if player.Position.Y <= 35 and x == 28:
+        y = player.Position.Y + 1
+        print 'y aug'
+        print y
+
+
     # return decision
-    return create_move_action(Point(0,1))
+    return create_move_action(Point(x,y))
+
+
 
 @app.route("/", methods=["POST"])
 def reponse():
@@ -94,4 +130,5 @@ def reponse():
     return bot()
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=3000)
+    app.run(host="0.0.0.0", port=8080)
+

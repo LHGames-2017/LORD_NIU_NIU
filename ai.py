@@ -64,7 +64,7 @@ def bot():
     y = pos["Y"]
     house = p["HouseLocation"]
     player = Player(p["Health"], p["MaxHealth"], Point(x,y),
-                    Point(house["X"], house["Y"]),
+                    Point(house["X"], house["Y"]), p["Score"],
                     p["CarriedResources"], p["CarryingCapacity"])
 
     # Map
@@ -94,8 +94,10 @@ def bot():
                 print '*', # player
         print '\n'
 
-    otherPlayers = []
 
+
+
+    otherPlayers = []
     for player_dict in map_json["OtherPlayers"]:
         for player_name in player_dict.keys():
             player_info = player_dict[player_name]
@@ -104,23 +106,28 @@ def bot():
                                      player_info["MaxHealth"],
                                      Point(p_pos["X"], p_pos["Y"]))
 
-            otherPlayers.append({player_name: player_info })
+            otherPlayers.append({player_name: player_info})
+
+    print 'sike'
+        # if player.Position.Y <= 35 and player.Position.X == 28:
+      #y = player.Position.Y + 1
+     #   print 'y aug'
+      #  print y
 
     if player.Position.X < 28:
-        x = player.Position.X + 1
         print 'X aug'
-        print x
+        return create_move_action(Point(player.Position.X+1, player.Position.Y))
+    elif player.Position.Y < 34:
+        print 'Y aug'
+        return create_move_action(Point(player.Position.X, player.Position.Y + 1))
+    #elif deserialize_map[player.Position.X][player.Position.Y + 1].Content == TileContent.Resource:
+    print 'ressource'
+    print player.CarriedRessources
+    return create_collect_action(Point(player.Position.X, player.Position.Y + 1))
 
-    if player.Position.Y <= 35 and x == 28:
-        y = player.Position.Y + 1
-        print 'y aug'
-        print y
-
-
+    print 'fail, no ressource'
     # return decision
-    return create_move_action(Point(x,y))
-
-
+   # return create_move_action(Point(x,y))
 
 @app.route("/", methods=["POST"])
 def reponse():
